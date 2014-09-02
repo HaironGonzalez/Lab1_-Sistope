@@ -43,45 +43,47 @@ void buscarrepetidas (char * nombre,vector<string> &repetidas)
 		exit(0);
 	}
 
+	if(validartexto(nombre)){
 
-	while (!archivo.eof())
-	{
-
-		archivo >> s1; 
-		for (vector<string>::iterator it = repetidas.begin() ; it != repetidas.end(); ++it)
+		while (!archivo.eof())
 		{
-            if (s1.compare(*it)==0)
-            {
-            	validacion=0;
-            	break;
-         	}
-        }
 
-		if(validacion)
-		{                        // si la palabra no está en el vector
-			aux.open(nombre);
-	
-			while(!aux.eof())
+			archivo >> s1; 
+			for (vector<string>::iterator it = repetidas.begin() ; it != repetidas.end(); ++it)
 			{
-				aux >> s2;
-				
-				if( s1.compare(s2)==0)
+	            if (s1.compare(*it)==0)
+	            {
+	            	validacion=0;
+	            	break;
+	         	}
+	        }
+
+			if(validacion)
+			{                        // si la palabra no está en el vector
+				aux.open(nombre);
+		
+				while(!aux.eof())
 				{
-					cont ++;
-				}
-				
-				if (cont > 1)
-				{
-					repetidas.push_back(s2);
-					break;
-				}
-				s2.clear();
-			}	
-			cont = 0;
-			aux.close();
+					aux >> s2;
+					
+					if( s1.compare(s2)==0)
+					{
+						cont ++;
+					}
+					
+					if (cont > 1)
+					{
+						repetidas.push_back(s2);
+						break;
+					}
+					s2.clear();
+				}	
+				cont = 0;
+				aux.close();
+			}
+			validacion=1;
+			s1.clear();
 		}
-		validacion=1;
-		s1.clear();
 	}	
 	archivo.close();
 }
@@ -134,44 +136,45 @@ void buscarrepetidasinter (char * nombref,char * nombreg,vector<string> &repetid
 		cout << "Error parámetros\n";
 		exit(0);
 	}
-
-	while (!archivof.eof())
-	{
-		archivof >> s1;
-		for (vector<string>::iterator it = repetidas.begin() ; it != repetidas.end(); ++it)
+	if(validartexto(nombref)==1 && validartexto(nombreg)==1){
+		while (!archivof.eof())
 		{
-            if (s1.compare(*it)==0)
-            {
-            	validacion=0;
-            	break;
-            }
-        }
-
-		if(validacion)
-		{                        // si la palabra no está en el vector
-			archivog.open(nombreg);
-			if(archivog.fail()){
-				
-				cout << "Error parámetros\n";
-				exit(0);
-			}
-			while(!archivog.eof())
+			archivof >> s1;
+			for (vector<string>::iterator it = repetidas.begin() ; it != repetidas.end(); ++it)
 			{
-				archivog >> s2;
-				
-				if( s1.compare(s2)==0)
-				{
-					repetidas.push_back(s2);
-					break;
-				}
-				s2.clear();
-			}	
+	            if (s1.compare(*it)==0)
+	            {
+	            	validacion=0;
+	            	break;
+	            }
+	        }
 
-			archivog.close();
-			s1.clear();
-			
+			if(validacion)
+			{                        // si la palabra no está en el vector
+				archivog.open(nombreg);
+				if(archivog.fail()){
+					
+					cout << "Error parámetros\n";
+					exit(0);
+				}
+				while(!archivog.eof())
+				{
+					archivog >> s2;
+					
+					if( s1.compare(s2)==0)
+					{
+						repetidas.push_back(s2);
+						break;
+					}
+					s2.clear();
+				}	
+
+				archivog.close();
+				s1.clear();
+				
+			}
+			validacion = 1;
 		}
-		validacion = 1;
 	}	
 	archivof.close();
 }
@@ -179,6 +182,14 @@ void buscarrepetidasinter (char * nombref,char * nombreg,vector<string> &repetid
 void mostraro(char * oflag)
 {
 	stringstream comando;
+	ifstream archivo;
+	archivo.open(oflag);
+
+	if(archivo.fail()){
+		cout << "Error parámetros\n";
+		exit(0);
+	}
+	archivo.close();
 	comando << "file -i " << oflag;
 	system( comando.str().c_str() );
 }
@@ -208,25 +219,16 @@ void guardaro(char * oflag,ofstream &salida)
 
 void mostrarO(char * Oflag)
 {
-	FILE *in;
-	char buff[512];
-	stringstream comando;
-	comando << "file -i " << Oflag;
+	ifstream archivo;
+	archivo.open(Oflag);
 
-	in = popen(comando.str().c_str(), "r");
-	fgets(buff, sizeof(buff), in);  
-
-	pclose(in);
-	int check = 0;
-	for (int i=0;i<508;i++)
-	{
-	  if (buff[i]== 't' && buff[i+1]== 'e' && buff[i+2]== 'x' && buff[i+3]== 't' && buff[i+4]== '/' && buff[i+5]== 'p' && buff[i+6]== 'l' && buff[i+7]== 'a'&&buff[i+8]== 'i'&&buff[i+9]== 'n')
-	  {
-	    check = 1;
-	    break;
-	  }
+	if(archivo.fail()){
+		cout << "Error parámetros\n";
+		exit(0);
 	}
-	if (check)
+	archivo.close();
+
+	if (validartexto(Oflag))
 	{
 	  stringstream comando2;
 	  comando2 << "cat " << Oflag;
@@ -236,34 +238,16 @@ void mostrarO(char * Oflag)
 
 void guardarO(char * Oflag,ofstream &salida)
 {
-	FILE *in;
-	char buff[512];
-	stringstream comando;
 	ifstream archivo;
-
 	archivo.open(Oflag);
-	if(archivo.fail())	{
+
+	if(archivo.fail()){
 		cout << "Error parámetros\n";
 		exit(0);
 	}
 	archivo.close();
-	comando << "file " << Oflag;
-	
-	in = popen(comando.str().c_str(), "r");
 
-	fgets(buff, sizeof(buff), in);  
-	pclose(in);
-	int check =0;
-	for (int i=0;i<508;i++)
-	{
-	  if (buff[i]== 't' && buff[i+1]== 'e' && buff[i+2]== 'x' && buff[i+3]== 't')
-	  {
-	    check = 1;
-	    break;
-	  }
-	}
-
-	if (check)
+	if (validartexto(Oflag))
 	{ 
 	  FILE *in;
 	  char buff2[512];
@@ -275,3 +259,25 @@ void guardarO(char * Oflag,ofstream &salida)
 	}
 }
 
+int validartexto(char * Oflag){
+
+	FILE *in;
+	char buff[512];
+	stringstream comando;
+	comando << "file -i " << Oflag;
+
+	in = popen(comando.str().c_str(), "r");
+	fgets(buff, sizeof(buff), in);  
+
+	pclose(in);
+	int check = 0;
+	for (int i=0;i<502;i++)
+	{
+	  if (buff[i]== 't' && buff[i+1]== 'e' && buff[i+2]== 'x' && buff[i+3]== 't' && buff[i+4]== '/' && buff[i+5]== 'p' && buff[i+6]== 'l' && buff[i+7]== 'a'&&buff[i+8]== 'i'&&buff[i+9]== 'n')
+	  {
+	    return 1;
+	  }
+	}
+	return 0;
+
+}

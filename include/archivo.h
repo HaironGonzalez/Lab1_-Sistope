@@ -29,5 +29,6 @@ void mostraro(char * oflag);
 void mostrarO(char * Oflag);
 void guardaro(char * oflag,ofstream &salida);
 void guardarO(char * Oflag,ofstream &salida);
+int validartexto(char * Oflag);
 
 #endif /* defined(__Laboratorio1__) */
